@@ -6,6 +6,7 @@ class subject {
 
     aggiungiVoto(voto) {
         if (typeof voto !== 'number' || Number.isNaN(voto)) throw new TypeError('Voto deve essere un numero');
+        if (voto < 1 || voto > 10) throw new RangeError('Voto deve essere compreso tra 1 e 10');
         this.votes.push(voto);
     }
 
@@ -22,10 +23,11 @@ class subject {
 }
 
 class student {
-    constructor(id, name) {
+    constructor(id, name, surname) {
         this.id = id;
         this.name = name || `Studente ${id}`;
-        this.subjects = new Map(); // nome -> subject
+        this.surname = surname || `Studente ${id}`;
+        this.subjects = new Map(); 
     }
 
     aggiungiMateria(nomeMateria) {
@@ -67,9 +69,9 @@ class register {
         this.currentUserId = null;
     }
 
-    inserisciUtente(id, name) {
+    inserisciUtente(id, name, surname) {
         if (this.students.has(id)) throw new Error('Utente già esistente');
-        const s = new student(id, name);
+        const s = new student(id, name, surname);
         this.students.set(id, s);
         if (this.currentUserId === null) this.currentUserId = id;
         return s;
@@ -87,9 +89,17 @@ class register {
     }
 }
 
+function Invia(){
+    const voto = document.getElementById("votoS").value;
+    const materia = document.getElementById("materiaS").value;
+    const utente = registro.getUtenteCorrente();
+    utente.subjects.get(materia).aggiungiVoto(parseFloat(voto));
+    console.log(`Voto ${voto} aggiunto alla materia ${materia} per l'utente ${utente.name}`);
+}
+
 const registro = new register();
-registro.inserisciUtente('u1', 'Alice');
-registro.inserisciUtente('u2', 'Bob');
+registro.inserisciUtente('u1', 'Alice', 'Rossi');
+registro.inserisciUtente('u2', 'Bob', 'Verdi');
 registro.cambiaUtente('u1');
 const alice = registro.getUtenteCorrente();
 alice.aggiungiMateria('Matematica');
