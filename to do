@@ -1,5 +1,10 @@
 REGISTRO ELETTRONICO:
-
+HTML:
+-Pagina Iniziale(richiesta username)
+-Bottoni per mettere i voti
+-Schermata per l'inserimento e rimozione dei voti
+-Schermata per l'inserimento e rimozione dei docenti
+-Logout
 JS:
 -Aggiunta voto
 -Rimozione voto
