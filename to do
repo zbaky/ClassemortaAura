@@ -1,1 +1,13 @@
+REGISTRO ELETTRONICO:
 
+JS:
+-Aggiunta voto
+-Rimozione voto
+-Aggiunta materia
+-Rimozione materia
+-Aggiunta docente
+-Rimozione docente
+-Calcolo media materia
+-Calcolo media totale
+-Inserimento utente
+-Cambio Utente
