@@ -18,7 +18,7 @@ class subject {
     media() {
         if (this.votes.length === 0) return null;
         const sum = this.votes.reduce((a, b) => a + b, 0);
-        return sum / this.votes.length;
+        return (sum / this.votes.length) / 2;
     }
 }
 
@@ -27,7 +27,7 @@ class student {
         this.id = id;
         this.name = name || `Studente ${id}`;
         this.surname = surname || `Studente ${id}`;
-        this.subjects = new Map(); 
+        this.subjects = new Map();
     }
 
     aggiungiMateria(nomeMateria) {
@@ -59,13 +59,13 @@ class student {
         }
         if (medie.length === 0) return null;
         const sum = medie.reduce((x, y) => x + y, 0);
-        return sum / medie.length;
+        return (sum / medie.length)*2;
     }
 }
 
 class register {
     constructor() {
-        this.students = new Map(); 
+        this.students = new Map();
         this.currentUserId = null;
     }
 
@@ -89,22 +89,71 @@ class register {
     }
 }
 
-function Invia(){
-    const voto = document.getElementById("votoS").value;
-    const materia = document.getElementById("materiaS").value;
-    const utente = registro.getUtenteCorrente();
-    utente.subjects.get(materia).aggiungiVoto(parseFloat(voto));
-    console.log(`Voto ${voto} aggiunto alla materia ${materia} per l'utente ${utente.name}`);
-}
-
 const registro = new register();
 registro.inserisciUtente('u1', 'Alice', 'Rossi');
 registro.inserisciUtente('u2', 'Bob', 'Verdi');
 registro.cambiaUtente('u1');
-const alice = registro.getUtenteCorrente();
-alice.aggiungiMateria('Matematica');
-const matematica = alice.getMateria('Matematica');
-matematica.aggiungiVoto(8);
-matematica.aggiungiVoto(7.5);
-console.log('Media Matematica Alice:', alice.mediaMateria('Matematica'));
-console.log('Media Totale Alice:', alice.mediaTotale());
+
+function calcolaMedia() {
+    const mediaElement = document.getElementById('mediaVoti');
+    if (!mediaElement) return null;
+
+    const utente = registro.getUtenteCorrente();
+    if (!utente) {
+        mediaElement.textContent = '0';
+        return 0;
+    }
+
+    const media = utente.mediaTotale();
+    const valore = media === null ? 0 : Number(media);
+    mediaElement.textContent = valore.toFixed(2);
+    return valore;
+}
+
+function Invia() {
+    const votoInput = document.getElementById('voto');
+    const materiaInput = document.getElementById('materia');
+    const listaVoti = document.getElementById('listaVoti');
+
+    if (!votoInput || !materiaInput || !listaVoti) return;
+
+    const voto = Number(votoInput.value);
+    const materia = materiaInput.value.trim();
+
+    if (!materia || Number.isNaN(voto) || voto < 1 || voto > 10) {
+        return;
+    }
+
+    const utente = registro.getUtenteCorrente();
+    if (!utente) return;
+
+    const materiaObj = utente.aggiungiMateria(materia);
+    materiaObj.aggiungiVoto(voto);
+
+    const newRow = document.createElement('div');
+    newRow.className = 'row mb-2 border rounded p-2';
+    newRow.innerHTML = `
+        <div class="col">
+            <input type="text" class="form-control" value="${voto}" disabled>
+        </div>
+        <div class="col">
+            <input type="text" class="form-control" value="${materia}" disabled>
+        </div>
+    `;
+
+    listaVoti.appendChild(newRow);
+    votoInput.value = '';
+    materiaInput.value = '';
+    calcolaMedia();
+}
+
+if (document.getElementById('formVoti')) {
+    document.getElementById('formVoti').addEventListener('submit', function (event) {
+        event.preventDefault();
+        Invia();
+    });
+}
+
+if (document.getElementById('mediaVoti')) {
+    calcolaMedia();
+}
